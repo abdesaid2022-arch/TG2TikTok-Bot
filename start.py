@@ -19,8 +19,15 @@ def decode_b64_env(key: str, output_path: str) -> None:
     if not raw:
         logger.warning("%s not set, skipping", key)
         return
+    # Some env-var managers strip whitespace/newlines or trailing '=' padding
+    # when the value is copy-pasted or stored, which breaks strict base64
+    # decoding with "Incorrect padding". Normalize before decoding.
+    cleaned = "".join(raw.split())
+    missing_padding = len(cleaned) % 4
+    if missing_padding:
+        cleaned += "=" * (4 - missing_padding)
     try:
-        data = base64.b64decode(raw)
+        data = base64.b64decode(cleaned, validate=False)
         with open(output_path, "wb") as f:
             f.write(data)
         logger.info("Decoded %s -> %s (%d bytes)", key, output_path, len(data))
