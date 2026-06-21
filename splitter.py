@@ -15,7 +15,7 @@ def _has_audio(path: str) -> bool:
         "ffprobe", "-i", path,
         "-show_streams", "-select_streams", "a",
         "-loglevel", "error"
-    ], capture_output=True, text=True)
+    ], capture_output=True, text=True, encoding="utf-8", errors="replace")
     return bool(r.stdout.strip())
 
 
@@ -28,7 +28,7 @@ def _validate(path: str) -> None:
         "ffprobe", "-i", path,
         "-show_streams", "-select_streams", "v",
         "-loglevel", "error"
-    ], capture_output=True, text=True)
+    ], capture_output=True, text=True, encoding="utf-8", errors="replace")
     if not r.stdout.strip():
         raise Exception("الملف لا يحتوي فيديو — حاول مجدداً")
 
@@ -45,7 +45,7 @@ def split_video(input_path: str, settings: dict) -> list[dict]:
         "ffprobe", "-i", input_path,
         "-show_entries", "format=duration",
         "-v", "quiet", "-of", "csv=p=0"
-    ], capture_output=True, text=True)
+    ], capture_output=True, text=True, encoding="utf-8", errors="replace")
     total_dur = float(r.stdout.strip() or 0)
 
     seg_starts = list(range(0, int(total_dur), split_sec - OVERLAP))
@@ -80,7 +80,8 @@ def split_video(input_path: str, settings: dict) -> list[dict]:
         ]
 
         logger.info("FFmpeg part %d/%d: start=%ds dur=%ds", idx+1, len(seg_starts), start, duration)
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=1800,
+                          encoding="utf-8", errors="replace")
         if r.returncode != 0:
             raise Exception(f"FFmpeg فشل في الجزء {idx+1}: {r.stderr[:500]}")
 
