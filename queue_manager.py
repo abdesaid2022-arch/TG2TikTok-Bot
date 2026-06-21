@@ -39,7 +39,6 @@ def add_to_queue(user_id: int, url: str, settings: dict) -> dict:
         queue.append(item)
         _pending[user_id] = queue
 
-    db.update_stats(user_id, 0)
     logger.info("Queue add user=%d url=%s id=%s", user_id, url, item["id"])
     return item
 

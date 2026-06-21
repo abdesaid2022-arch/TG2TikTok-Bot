@@ -18,10 +18,12 @@ async def run():
     admin_app = build_admin_app()
 
     async with user_app:
+        await user_app.start()
         await user_app.updater.start_polling()
         logger.info("User bot polling started")
 
         async with admin_app:
+            await admin_app.start()
             await admin_app.updater.start_polling()
             logger.info("Admin bot polling started")
 
@@ -29,3 +31,7 @@ async def run():
                 await asyncio.Event().wait()
             finally:
                 logger.info("Shutting down...")
+                await admin_app.updater.stop()
+                await admin_app.stop()
+        await user_app.updater.stop()
+        await user_app.stop()

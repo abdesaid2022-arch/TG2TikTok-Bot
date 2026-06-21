@@ -167,6 +167,7 @@ async def process_queue(user_id: int, bot) -> None:
                 u["woopsocial_social_account_id"])
 
             ok_parts = sum(1 for r in result if r["status"] == "ok")
+            db.update_stats(user_id, ok_parts)
             await bot.send_message(user_id,
                 f"✅ تمت معالجة {item['url'][:50]} → {ok_parts}/{len(parts)} أجزاء")
 

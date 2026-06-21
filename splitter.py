@@ -60,7 +60,7 @@ def split_video(input_path: str, settings: dict) -> list[dict]:
             duration = total_dur - start
 
         out = os.path.join(TEMP_DIR, f"part_{idx+1:03d}.mp4")
-        filter_str = f"[0:v]setpts=PTS/{speed},scale=min(1080\\,iw):min(1920\\,ih):force_original_aspect_ratio=decrease[v]"
+        filter_str = f"[0:v]setpts=PTS/{speed},scale=min(1080\\,iw):min(1920\\,ih):force_original_aspect_ratio=decrease,scale=trunc(iw/2)*2:trunc(ih/2)*2[v]"
         if has_audio:
             filter_str += f";[0:a]atempo={speed}[a]"
         cmd = [

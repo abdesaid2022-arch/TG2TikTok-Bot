@@ -62,6 +62,7 @@ async def add_user_project(update: Update, ctx: CallbackContext) -> int:
 
 
 async def add_user_social(update: Update, ctx: CallbackContext) -> int:
+    ctx.user_data["add_social"] = update.message.text.strip()
     d = ctx.user_data
     user = db.add_user(d["add_uid"], d["add_plan"], d["add_days"],
                        d["add_api"], d["add_project"], d["add_social"])

@@ -61,7 +61,8 @@ def download_video(url: str, file_key: str) -> str | None:
         opts = _base_opts()
         opts["outtmpl"] = outtmpl
         opts["format"] = fmt_fallbacks[0]
-        opts["extractor_args"] = {"youtube": {"player_client": [client]}}
+        opts.setdefault("extractor_args", {})
+        opts["extractor_args"].setdefault("youtube", {})["player_client"] = [client]
         try:
             with yt_dlp.YoutubeDL(opts) as ydl:
                 info = ydl.extract_info(url, download=True)
